@@ -4,9 +4,16 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Scanner;
 public class Main {
 	
 	public static void main(String[] args) {
+		
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.println("Cerca:");
+		String toSearch = sc.nextLine();
+		sc.close();
 		
 		final String url = "jdbc:mysql://localhost:8889/db-nations";
 		final String user = "root";
@@ -20,9 +27,11 @@ public class Main {
 					+ "	ON c.region_id = r.region_id \n"
 					+ "JOIN continents c2 \n"
 					+ "	ON c2.continent_id = r.continent_id\n"
+					+ "WHERE c.name LIKE ? "
 					+ "ORDER BY c.name \n";
 			
 			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, '%'+ toSearch +'%');
 			ResultSet result = ps.executeQuery();
 			
 			while(result.next()) {
@@ -40,8 +49,6 @@ public class Main {
 				
 				System.out.println("\n------------------------------\n");
 			}
-			
-			System.out.println("Connessione stabilita correttamente");
 		} catch (Exception e) {
 			
 			System.out.println("Errore di connessione: " + e.getMessage());
